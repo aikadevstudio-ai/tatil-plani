@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kurban Bayramı 2026 – Tatil Rotası</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --text: #e8eef4;
+      --muted: #8b9cb3;
+      --accent: #3d9cf5;
+      --line: #2d3d52;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 12px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+    header h1 {
+      margin: 0 0 4px;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .wrap {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(280px, 380px) 1fr;
+      min-height: 0;
+    }
+    @media (max-width: 900px) {
+      .wrap { grid-template-columns: 1fr; grid-template-rows: auto 50vh; }
+    }
+    aside {
+      overflow-y: auto;
+      padding: 12px;
+      border-right: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .day {
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+    }
+    .day h2 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: var(--accent);
+    }
+    .day .route {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .day ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .time {
+      display: inline-block;
+      background: rgba(61, 156, 245, 0.15);
+      color: #7eb8f0;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-top: 6px;
+    }
+    #map { height: 100%; min-height: 320px; }
+    .note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+    }
+    .leaflet-popup-content {
+      margin: 10px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .popup-title { font-weight: 600; margin-bottom: 6px; }
+    .leaflet-tooltip.waypoint-tip {
+      background: rgba(26, 35, 50, 0.96);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+    .leaflet-tooltip.waypoint-tip::before {
+      border-top-color: rgba(26, 35, 50, 0.96) !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kurban Bayramı tatili – Mayıs 2026 rotası</h1>
+    <p>Haritada günlük duraklar; solda yol süreleri (≈ normal trafik, mola hariç) ve şehir önerileri. Oteller eklendiğinde bu dosyaya veya ayrı bir nota işleyebilirsiniz.</p>
+  </header>
+  <div class="wrap">
+    <aside>
+      <div class="day" data-focus="22" data-lat="42.6977" data-lng="23.3219" data-zoom="7">
+        <h2>22 Mayıs (Cuma)</h2>
+        <div class="route">İstanbul (Gebze çıkışı mümkün) → Sofya · araç</div>
+        <span class="time">Yaklaşık 6,5–8 saat (~550–650 km, sınır + yoğunluğa bağlı)</span>
+        <ul>
+          <li>Sofya: katedral, Vitosha caddesi, Banya Başı Camii, Nevski kilisesi — akşam yürüyüşü için yeterli.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="23" data-lat="45.815" data-lng="15.9819" data-zoom="7">
+        <h2>23 Mayıs (Cumartesi)</h2>
+        <div class="route">Sofya → Belgrad → Zagreb · annenizin arabası, erken çıkış</div>
+        <span class="time">Sofya–Belgrad ~4–4,5 saat · Belgrad–Zagreb ~3,5–4 saat (toplam ~8–9 saat + molalar)</span>
+        <ul>
+          <li><strong>Belgrad</strong> (kısa mola): Kalemegdan, Skadarlıja, Sava kenarı.</li>
+          <li><strong>Zagreb</strong>: Üst şehir (Gradec), St. Marko kilisesi, Dolac pazar.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="24" data-lat="44.4949" data-lng="11.3426" data-zoom="7">
+        <h2>24 Mayıs (Pazar)</h2>
+        <div class="route">Zagreb → Venedik (Venezia) → Bologna · gece Bologna</div>
+        <span class="time">Zagreb–Venedik ~3–3,5 saat · Venedik–Bologna ~1,5–2 saat</span>
+        <ul>
+          <li><strong>Venedik (Venezia)</strong> (günübırık): San Marco, Rialto, dar sokaklar; vapur/tren ile lagün kenarı.</li>
+          <li><strong>Bologna</strong> (akşam): Piazza Maggiore, İki Kule, portikolu sokaklar, tagliatelle al ragù.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="25" data-lat="41.9028" data-lng="12.4964" data-zoom="8">
+        <h2>25 Mayıs (Pazartesi)</h2>
+        <div class="route">Bologna → Floransa → Pisa → Roma · gece Roma</div>
+        <span class="time">Bologna–Floransa ~1,5 saat · Floransa–Pisa ~1 saat · Pisa–Roma ~3,5–4 saat</span>
+        <ul>
+          <li><strong>Floransa</strong>: Duomo, Ponte Vecchio, Uffizi dışı + tarihi merkez (tam gün değilse öncelik merkez).</li>
+          <li><strong>Pisa</strong>: Piazza dei Miracoli (kule + vaftizhane + katedral).</li>
+          <li><strong>Roma</strong>: akşam Colosseo / Forum / Trastevere kısa tur.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="26" data-lat="48.1372" data-lng="11.5755" data-zoom="8">
+        <h2>26 Mayıs (Salı)</h2>
+        <div class="route">Siz: Sabah uçakla Roma’dan Münih · Anneniz: Roma → Salerno (akşam konaklama)</div>
+        <span class="time">Roma–Salerno ~2,5–3 saat (otoyol) · Roma–Münih uçuşu ~1–1,5 saat (+ havalimanı süreleri)</span>
+        <ul>
+          <li><strong>Münih</strong>: 26 akşam tanıtım — Marienplatz, Viktualienmarkt; asıl geziler 27–29.</li>
+          <li><strong>Salerno</strong>: sahil, Duomo, eski merkez — anneniz için akşam kısa tur.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="27-28" data-lat="44.0" data-lng="11.8" data-zoom="5">
+        <h2>27–28 Mayıs (Çarşamba–Perşembe)</h2>
+        <div class="route">Anneniz: Salerno’da gezinti · Siz: Münih’te gezinti</div>
+        <span class="time">—</span>
+        <ul>
+          <li><strong>Salerno</strong>: Arechi kalesi, Lungomare yürüyüşü, Paestum günübirlik (araçla ~45 dk); Amalfi/Pompei tren veya tur (isteğe bağlı).</li>
+          <li><strong>Münih</strong>: Nymphenburg, Englischer Garten, BMW Welt / Olympiapark, müzeler (Pinakothek, Deutsches Museum — zamanınıza göre seçin).</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="29" data-lat="43.8" data-lng="14.5" data-zoom="6">
+        <h2>29 Mayıs (Cuma)</h2>
+        <div class="route">Siz: Gündüz Münih · akşam/gece Tiran uçuşu · Anneniz: Salerno → Bari → gece feribot → Durrës</div>
+        <span class="time">Salerno–Bari ~2,5–3 saat · Münih–Tiran uçuşu genelde ~1,5–2 saat (+ transfer) · feribot Bari–Durrës işletmeye göre ~8–12 saat</span>
+        <ul>
+          <li><strong>Münih</strong>: son saatlerde Viktualienmarkt veya alışveriş; uçuş öncesi S-Bahn ile havalimanı payı.</li>
+          <li><strong>Bari</strong> (anneniz): Vecchia Bari, katedral, feribot öncesi liman.</li>
+          <li>Tiran varışınız 29 gece veya 30 çok erken olabilir — biletinize göre 30 Mayıs kartına uydurun.</li>
+        </ul>
+      </div>
+      <div class="day" data-focus="30" data-lat="41.3275" data-lng="19.8187" data-zoom="9">
+        <h2>30 Mayıs (Cumartesi)</h2>
+        <div class="route">Tiran’da sabah buluşma → araçla Sofya</div>
+        <span class="time">Tiran–Sofya kara ~5,5–7 saat (rota ve sınıra göre değişir; pay bırakın)</span>
+        <ul>
+          <li><strong>Tiran</strong>: Skanderbeg Meydanı, Et’Hem Bey Camii, Blloku — sabah buluşması için.</li>
+        </ul>
+      </div>
+    </aside>
+    <div id="map"></div>
+  </div>
+  <p class="note">Harita: mavi ana hat kara rotası (annenizin Salerno–Bari–Durrës–Tiran–Sofya ayağı dahil); turuncu kesik çizgi Roma–Münih uçuşu; mor kesik çizgi Münih–Tiran uçuşu. Feribot süresi ve uçuş saatleri biletinize göre güncelleyin. OpenStreetMap katmanı kullanır.</p>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    /** Tekil veya aralık (örn. 26–29) gün etiketini Türkçe tarihe çevirir */
+    function formatTripDay(day) {
+      if (day == null || day === "") return "";
+      const s = String(day).trim().replace(/\u2013|\u2014/g, "–").replace(/(\d+)\s*-\s*(\d+)/, "$1–$2");
+      if (s.includes("–")) return s + " Mayıs";
+      return s + " Mayıs";
+    }
+
+    const cities = [
+      { id: "istanbul", name: "İstanbul / Gebze", lat: 40.8028, lng: 29.4306, day: "22", note: "Çıkış ~05:00 (veya daha erken Gebze)." },
+      { id: "sofya1", name: "Sofya", lat: 42.6977, lng: 23.3219, day: "22", note: "22 Mayıs gece." },
+      { id: "belgrad", name: "Belgrad", lat: 44.7866, lng: 20.4489, day: "23", note: "Geçiş / mola." },
+      { id: "zagreb", name: "Zagreb", lat: 45.8150, lng: 15.9819, day: "23", note: "23 gece." },
+      { id: "venice", name: "Venedik (Venezia)", lat: 45.4408, lng: 12.3155, day: "24", note: "24 gün — İtalya." },
+      { id: "bologna", name: "Bologna", lat: 44.4949, lng: 11.3426, day: "24", note: "24 gece." },
+      { id: "florence", name: "Floransa", lat: 43.7696, lng: 11.2558, day: "25", note: "25 sabah/öğle." },
+      { id: "pisa", name: "Pisa", lat: 43.7228, lng: 10.4017, day: "25", note: "25 öğleden sonra." },
+      { id: "rome", name: "Roma", lat: 41.9028, lng: 12.4964, day: "25", note: "25 gece; 26 ayrılık." },
+      { id: "munich", name: "Münih", lat: 48.1372, lng: 11.5755, day: "26–29", note: "26–29 Mayıs; 29 akşam/gece Tiran uçuşu." },
+      { id: "salerno", name: "Salerno", lat: 40.6824, lng: 14.7681, day: "26–29", note: "Anneniz: gezinti 27–28; 29’da Bari’ye çıkış." },
+      { id: "bari", name: "Bari", lat: 41.1177, lng: 16.8719, day: "29", note: "Feribot kalkış." },
+      { id: "durres", name: "Durrës", lat: 41.3231, lng: 19.4414, day: "29", note: "Gece feribot varışı (30 sabahına sarkan)." },
+      { id: "tirana", name: "Tiran", lat: 41.3275, lng: 19.8187, day: "29–30", note: "29 gece/30 sabah varış; 30 sabah buluşma." },
+      { id: "sofya2", name: "Sofya (dönüş)", lat: 42.6977, lng: 23.3219, day: "30", note: "Tiran sonrası hedef — aynı şehir ikinci durak." }
+    ];
+
+    const carRouteLatLngs = [
+      [40.8028, 29.4306],
+      [42.6977, 23.3219],
+      [44.7866, 20.4489],
+      [45.8150, 15.9819],
+      [45.4408, 12.3155],
+      [44.4949, 11.3426],
+      [43.7696, 11.2558],
+      [43.7228, 10.4017],
+      [41.9028, 12.4964],
+      [40.6824, 14.7681],
+      [41.1177, 16.8719],
+      [41.3231, 19.4414],
+      [41.3275, 19.8187],
+      [42.6977, 23.3219]
+    ];
+
+    const map = L.map("map").setView([44.5, 16], 5);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+
+    const carLine = L.polyline(carRouteLatLngs.map(([a, b]) => [a, b]), {
+      color: "#3d9cf5",
+      weight: 3,
+      opacity: 0.85
+    }).addTo(map);
+
+    const flyRomeMunich = L.polyline([[41.9028, 12.4964], [48.1372, 11.5755]], {
+      color: "#e8956c",
+      weight: 3,
+      opacity: 0.9,
+      dashArray: "8 6"
+    }).addTo(map);
+
+    const flyMunichTirana = L.polyline([[48.1372, 11.5755], [41.3275, 19.8187]], {
+      color: "#c27bd6",
+      weight: 3,
+      opacity: 0.9,
+      dashArray: "6 10"
+    }).addTo(map);
+
+    L.marker([48.1372, 11.5755])
+      .bindTooltip("<strong>Münih</strong><br>" + formatTripDay("26–29"), { className: "waypoint-tip", direction: "top" })
+      .bindPopup(
+        "<div class='popup-title'>Münih · " +
+          formatTripDay("26–29") +
+          "</div><p>26–29 Mayıs konaklama ve geziler; 29’da Tiran uçuşu (mor kesik çizgi).</p>"
+      )
+      .addTo(map);
+
+    const tipOpts = { className: "waypoint-tip", direction: "top", sticky: true };
+
+    cities.forEach((c, i) => {
+      if (c.id === "sofya2") {
+        const icon = L.divIcon({
+          className: "sofya-dup",
+          html: '<div style="width:12px;height:12px;border-radius:50%;background:#7eb8f0;border:2px solid #fff;"></div>',
+          iconSize: [12, 12]
+        });
+        L.marker([c.lat, c.lng], { icon })
+          .bindTooltip("<strong>" + c.name + "</strong><br>" + formatTripDay(c.day), tipOpts)
+          .bindPopup("<div class='popup-title'>" + c.name + " · " + formatTripDay(c.day) + "</div><p>" + c.note + "</p>")
+          .addTo(map);
+        return;
+      }
+      if (c.id === "munich") return;
+      L.circleMarker([c.lat, c.lng], {
+        radius: 8,
+        fillColor: "#3d9cf5",
+        color: "#fff",
+        weight: 2,
+        fillOpacity: 0.9
+      })
+        .bindTooltip("<strong>" + c.name + "</strong><br>" + formatTripDay(c.day), tipOpts)
+        .bindPopup("<div class='popup-title'>" + c.name + " · " + formatTripDay(c.day) + "</div><p>" + c.note + "</p>")
+        .addTo(map);
+    });
+
+    map.fitBounds(
+      carLine.getBounds().extend(flyRomeMunich.getBounds()).extend(flyMunichTirana.getBounds()),
+      { padding: [40, 40] }
+    );
+
+    document.querySelectorAll(".day").forEach((el) => {
+      el.style.cursor = "pointer";
+      el.addEventListener("click", () => {
+        const lat = parseFloat(el.getAttribute("data-lat"));
+        const lng = parseFloat(el.getAttribute("data-lng"));
+        const zoom = parseInt(el.getAttribute("data-zoom"), 10);
+        if (!Number.isNaN(lat) && !Number.isNaN(lng)) map.setView([lat, lng], zoom || 7, { animate: true });
+      });
+    });
+  </script>
+</body>
+</html>
